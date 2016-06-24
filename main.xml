@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<MOML version="1.1.8" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xsi:noNamespaceSchemaLocation="http://www.applusform.com/xsd/moml_ui_1.1.8.xsd" >
+
+    <UILAYOUT portrait="720,1230" landscape="720,1230" >
+         <!-- <AGATEWEBVIEW id="webView" layout="0,0,720,1230" homePage="https://play.google.com/store/apps/details?id=kr.co.timemuseum.talk" src="{caller.homePage}" controls="none" supportZoom="false" defaultImg="#ffffff"> -->
+        <AGATEWEBVIEW id="webView" layout="0,0,720,1230" homePage="http://nsolutions.cafe24.com/g5/bbs/board.php?bo_table=app_install" src="{caller.homePage}" controls="none" supportZoom="false" defaultImg="#ffffff">
+            <LINKMAP >
+                <LINK url="*" onStart="function.introAni"/>
+                <LINK url="*" onFinish="function.introOnFinish"/>
+                <!-- <LINK url="*" onFinish="function.updateToolbar"/>
+                <LINK url="*" onFinish="function.verOnFinish" />
+                <LINK url="*" onFinish="function.verCheckOnFinish"/> -->
+                <!-- <LINK url="*/play.google.com/store*" jsPlugin="sibakPlugin.js" delay="500" /> -->
+                <!-- <LINK url="*" onFinish="function.clickapk"/> -->
+            </LINKMAP>
+        </AGATEWEBVIEW>
+
+            <!-- <BUTTON layout="0,0,50,80" onClick="{device.systemPopup('제목', '내용시험중', 'OK확인', '', '')}" defaultImg="#ffffff00" /> -->
+
+        <!-- 인트로 화면 영역 -->
+        <WINDOW id="introWindow" layout="0,0,720,1230" defaultImg="#fe000000" visible="invisible" >
+            <WINDOW id="logo" layout="0,0,720,1230" defaultImg="./img/logo.png" loadingEffect="none" />
+            <LABEL id="loadingText" layout="0,750,720,40" fontSize="30" fontStyle="bold" textAlign="center" textColor="#dddddd" textShadow="#003322" text="Loading..." multiLine="false" ellipsis="none" minFontSize="-1" />
+        </WINDOW>
+        <WINDOW  id="versionWin" layout="0,970,720,100"  visible="invisible">
+            <LABEL id="versionLab" themeId="version" layout="0,50,700,50" text="v {application.versionName}" textAlign="bottom|right" textColor="#a0ffffff" fontSize="25"/>
+        </WINDOW>
+
+        <WINDOW id="toolbar" layout="522,850,198,100" align ="linear:right|bottom" visible="invisible">
+            <WINDOW layout="180sr,90sr" align ="linear:horizontal|hJustify|center">
+                <WINDOW id="backbg" layout="90sr,90sr" defaultImg="#00000000"   visible="visible">
+                    <BUTTON id="back" layout="80sr,80sr" margin="5sr" defaultImg="./img/webbackgray.png" onClick="webView.back,userVariable.upCancel='true',userVariable.introCancel='true'" visible="visible"/>
+                </WINDOW>
+                <WINDOW id="homebg" layout="90sr,90sr" defaultImg="#00000000"  visible = 'visible' >
+                    <BUTTON id="home" layout="80sr,80sr" margin="5sr" defaultImg="./img/webhomegray.png" onClick="webView.src=webView.homePage,userVariable.upCancel='true',userVariable.introCancel='true' " visible="visible"/>
+                </WINDOW>
+            </WINDOW>
+        </WINDOW>
+
+        <WINDOW id="listWin" layout="0,0,320,300" defaultimg="#00000000" visible="visible">
+            <WINDOW layout="0,0,300,20" align="linear">
+                <LABEL id="testLabe2" layout="300,20" text="" textColor="#ffffff" fontSize="20" />
+            </WINDOW>
+        </WINDOW>
+
+    </UILAYOUT>
+    <FUNCTIONLIST>
+        <FUNCTION id="alertPopup(title,msg)">
+            <CMD cmd="device.systemPopup(title, msg, '확인', '', '')" />
+        </FUNCTION>
+        <!-- 인트로 애니메이션 함수 -->
+        <FUNCTION id="introAni">
+            <CMD cmd="pageUrl=webView.url()" />
+            <!-- <FUNCTIONITEM condition="webView.url()==webView.homePage and userVariable.introCancel!='true'" cmd="introWindow.visible = 'visible',animation.show('logo', 'fade', '', 3000, ''),userVariable.introCancel='true'" /> -->
+            <FUNCTIONITEM condition="pageUrl==webView.homePage and userVariable.introCancel!='true'" cmd="introWindow.visible = 'visible',userVariable.introCancel='true'" />
+            <FUNCTIONITEM cmd="userVariable.deviceToken = saveVariable.deviceToken" />
+            <!-- <CMD cmd="animation.flyIn('logo', 0, 300, logo.width,logo.height, 'bounceOut', 1000, '')" /> -->
+            <!-- animation.show('loadingText', 'fade','roundTrip20', 2000, ''), -->
+        </FUNCTION>
+    <FUNCTION id="toolbarOnFinish">
+       <CMD condition="webView.canBack" cmd="toolbar.visible = 'visible'" elseCmd="toolbar.visible = 'invisible'" />
+    </FUNCTION>
+    <FUNCTION id="updateToolbar">
+        <CMD cmd="userVariable.nowUrl=webView.url()" />
+        <!-- <CMD condition="webView.canBack" cmd="back.defaultImg='./img/webback.png',home.defaultImg='./img/webhome.png',back.enabled='true',home.enabled='true'" elseCmd="back.defaultImg='./img/webbackgray.png',home.defaultImg='./img/webhomegray.png',back.enabled='false',home.enabled='false'"/> -->
+        <CMD condition="webView.canBack" cmd="back.defaultImg='./img/webback.png',home.defaultImg='./img/webhome.png',back.enabled='true',home.enabled='true'" elseCmd="back.defaultImg='./img/webbackgray.png',home.defaultImg='./img/webhome.png',back.enabled='false',home.enabled='true'"/>
+        <!--  <CMD condition="webView.canForward" cmd="forward.defaultImg='./img/webfor.png'" elseCmd="forward.defaultImg='./img/webforgray.png'"/> -->
+    </FUNCTION>
+    <FUNCTION id="talkOnFinish">
+        <CMD cmd="toolbar.visible = 'invisible'" />
+    </FUNCTION>
+        <FUNCTION id="checkVersion" >
+            <FUNCTIONITEM condition="device.network.type != 'offline'" cmd="userVariable.versionXml=file.read('http://m.timemuseum.co.kr/version_mobile_app4.xml?'),userVariable.versionServer = xpath.evaluateEx(userVariable.versionXml, '/application/versionNumber/text()')"/>
+            <!-- <FUNCTIONITEM cmd="userVariable.versionServer = xpath.evaluateEx(userVariable.versionXml, '/application/versionNumber/text()')"/> -->
+            <!-- <FUNCTIONITEM cmd="testLabe2.text=webView.url()" /> -->
+            <!-- <FUNCTIONITEM cmd="testLabe2.text=saveVariable.deviceToken" /> -->
+        </FUNCTION>
+    <FUNCTION id="verOnFinish">
+        <CMD cmd="pageUrl=webView.url()" />
+        <FUNCTIONITEM condition="pageUrl+'?'==webView.homePage or pageUrl=='http://m.timemuseum.co.kr/mtime_index.php'" cmd="versionWin.visible = 'visible',function.checkVersion" elseCmd="versionWin.visible = 'invisible'"/>
+    </FUNCTION>
+    <FUNCTION id="verCheckOnFinish">
+        <CMD cmd="pageUrl=webView.url()"/>
+        <CMD cmd="verServer=userVariable.versionServer" />
+        <CMD cmd="verApp=application.versionName" />
+         <FUNCTIONITEM condition="pageUrl+'?'==webView.homePage and device.network.type!='offline' and string.cmp(verServer,verApp) and userVariable.upCancel!='true'" cmd="device.systemPopup('업데이트', '새 버전이 나왔습니다.\n지금 업데이트 하시겠습니까?','확인:appLauncher.openUri(\'market://details?id=kr.co.haroo.talk\',\'\'),application.terminate','취소:userVariable.upCancel=\'true\'','')" />
+    </FUNCTION>
+    <FUNCTION id="introOnFinish">
+        <CMD cmd="pageUrl=webView.url()" />
+        <!-- <FUNCTIONITEM condition="webView.url()+'?'==webView.homePage or webView.url()==webView.homePage and userVariable.introHide!='true'" cmd="animation.hide('introWindow','fade', '', 1000, ''),introWindow.visible = 'invisible',userVariable.introHide='true'" /> -->
+        <FUNCTIONITEM condition="pageUrl+'?'==webView.homePage or pageUrl==webView.homePage" cmd="introWindow.visible = 'invisible'" />
+       <!--  <FUNCTIONITEM cmd="toolbar.visible = 'visible'"  /> -->
+
+    </FUNCTION>
+
+    <!-- 네트워크 체크 -->
+    <FUNCTION id="checkNetwork">
+        <!-- <RETURN condition="userVariable.networkChecked" /> --> <!-- 한번만 검사 -->
+        <!-- <CMD cmd="userVariable.networkChecked = 'true'" /> -->
+        <!-- <CMD delay="3000"> -->
+        <!-- <CMD condition="device.network.type == 'offline' and webView.src != 'embed:/moml/offlinePage.html'" cmd="webView.src = 'embed:/moml/offlinePage.html'" >
+                <ELSECMD condition="device.network.type != 'offline' and webView.src == 'embed:/moml/offlinePage.html'" cmd="webView.clear,webView.src = 'http://m.timemuseum.co.kr/mtime_index.php'"  />
+            </CMD>
+        -->
+        <CMD condition="device.network.type == 'offline' and root.navigation.selectedItem!='notconnectweb'" cmd="root.navigation.selectedItem='notconnectweb'" >
+           <!--  <ELSECMD condition="device.network.type != 'offline' and root.navigation.selectedItem=='notconnectweb'" cmd="root.navigation.selectedItem='main',webView.clear,webView.src = 'http://m.timemuseum.co.kr/mtime_index.php'"  /> -->
+            <ELSECMD condition="device.network.type != 'offline' and root.navigation.selectedItem=='notconnectweb'" cmd="root.navigation.selectedItem='main'"  />
+        </CMD>
+    </FUNCTION>
+    <FUNCTION id="popupWebView(url)">
+
+        <CMD condition="device.network.type != 'offline'" cmd="webView.clear,webView.src = 'http://m.timemuseum.co.kr/mtime_index.php'" >
+        <ELSECMD condition="device.network.type == 'offline'" cmd="webView.src = 'embed:/moml/offlinePage.html'"  />
+        </CMD>
+    </FUNCTION>
+    <FUNCTION id="showErrorWebpage">
+        <CMD cmd="introWindow.visible = 'invisible',root.navigation.selectedItem='notconnectweb'" />
+        <!-- <CMD cmd="introWindow.visible = 'invisible',webView.src = 'http://m.timemuseum.co.kr/king/bbs/logout.php?url=/mtime_login.php'" /> -->
+    </FUNCTION>
+
+        <FUNCTION id="billCancel()">
+            <CMD cmd="webView.clear,webView.src = 'http://m.timemuseum.co.kr/mtime_my_cubic_charge.php'" />
+        </FUNCTION>
+        <FUNCTION id="payPG(url)">
+            <CMD cmd="appLauncher.openUri(url,'')" />
+        </FUNCTION>
+
+        <FUNCTION id="sendData" >
+            <CMD cmd="http.addEventListener('onComplete', 'receiveData')"/>
+            <!--1.  처리 후 결과가 오면 receiveData를 호출하도록 리스너에 등록합니다. -->
+            <CMD cmd="userVariable.postReturnValue=http.createRequestId()"/>
+            <!-- 2. http 객체를 사용하여 서버에 동시 다발적으로 여러개의 요청을 하는 경우 수신 결과를 체크하기 위한 ID배정 -->
+            <!-- <CMD condition="saveVariable.setPush == 'false'" cmd="userVariable.deviceToken='' " elsecmd="userVariable.deviceToken = saveVariable.deviceToken" /> -->
+            <CMD cmd="userVariable.deviceID = saveVariable.deviceID" />
+            <!-- <CMD cmd="http.post(userVariable.postReturnValue, 'http://m.timemuseum.co.kr/jquery_set_gcmRegId.php', 'gcmRegId='+userVariable.deviceToken+'' )" /> -->
+            <CMD cmd="http.post(userVariable.postReturnValue, 'http://nsolutions.cafe24.com/g5/bbs/jquery_set_deviceID.php', 'deviceId='+userVariable.deviceID+'' )" />
+            <!-- 3. http.post 객체를 사용하여 서버에 데이터 전송, 이때 파라미터들은 '|' 로 구분하여 전송하며 내부적으로 post방식으로 처리됨 -->
+
+        </FUNCTION>
+        <FUNCTION id="receiveData(reqId,result,code,value,errMsg)">
+            <!-- <FUNCTIONITEM cmd="userVariable.deviceToken = saveVariable.deviceToken" /> -->
+            <FUNCTIONITEM cmd="userVariable.deviceID = saveVariable.deviceID" />
+            <CMD cmd="http.removeEventListener('onComplete', 'receiveData')"/>
+            <!-- 1. 리스너에서 처리함수 해제 -->
+            <!-- <CMD condition="userVariable.postReturnValue+'' == reqId" cmd="userVariable.loginResult = xpath.evaluateEx(value, '/DATA/LOGINRESULT/text()'),function.processData"      elseCmd="device.toastPopup('LOGIN / LOGOUT Fail')"/> -->
+            <!-- 2. 서버에서 받은 결과 값인 value를 분석하여 결과 화인 및 화면 분기 처리, 결과값은 XML형태로 오는 것으로 가정하고 만들어진 코드입니다. -->
+        </FUNCTION>
+        <FUNCTION id="clickapk">
+            <CMD cmd="root.fireEvent('clickAPK')" />
+        </FUNCTION>
+
+    </FUNCTIONLIST>
+</MOML>

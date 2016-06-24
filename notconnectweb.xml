@@ -1,0 +1,32 @@
+<MOML version="1.1.8" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.applusform.com/xsd/moml_ui_1.1.8.xsd">
+
+    <UILAYOUT portrait="720,1280" landscape="720,1280">
+        <WINDOW layout="0,0,720,1280" visible="visible" defaultImg="#feffffff">
+            <WINDOW layout="0,0,720,122" align="linear:horizontal|center" defaultImg="#20221D">
+                <BUTTON layout="234,40" margin="0,0,12,0" defaultImg="./img/top_sibak_logo.png" onClick="function.goMain"/>
+                <IMAGE layout="148,40"  defaultImg="./img/top_sibak_logo_txt.png" />
+
+            </WINDOW>
+            <WINDOW layout="0,300,720,250" align="linear:horizontal|center">
+                <IMAGE layout="100,69" defaultImg="./img/wifi_signal.png" />
+            </WINDOW>
+            <WINDOW layout="0,500,720,80" align="linear:horizontal|center">
+                <LABEL layout="720,80" text="네트워크에 접속할 수 없습니다." fontSize="10pt" textColor="#333333" textAlign="center|vCenter" />
+            </WINDOW>
+            <WINDOW layout="0,580,720,70" align="linear:horizontal|center">
+                <LABEL layout="720,70" text="네트워크 연결 상태를 확인해 주세요.{'\n'} " fontSize="10pt" textColor="#999999" textAlign="center|vCenter" />
+            </WINDOW>
+            <WINDOW layout="0,680,720,100" align="linear:horizontal|center">
+                <BUTTON layout="200,80" text="재시도" defaultImg="#44484B" fontSize="8pt" textColor="#ffffff" pressedImg="#bc1c2d42" onClick="function.goMain" />
+            </WINDOW>
+        </WINDOW>
+    </UILAYOUT>
+
+    <FUNCTION id="goMain">
+        <CMD condition="device.network.type != 'offline'" cmd="root.navigation.selectedItem='main'" />
+    </FUNCTION>
+    <FUNCTION id="goMarket">
+        <CMD condition="device.network.type != 'offline'" cmd="appLauncher.openUri('market://details?id=kr.co.haroo.talk','')" />
+    </FUNCTION>
+
+</MOML>
