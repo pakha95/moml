@@ -7,7 +7,8 @@
 -->
 <MOML>
     <APPLICATIONINFO>
-        <START url="ui/start.xml" />
+        <!-- <START url="ui/start.xml" /> -->
+	<START url="start.xml" />
         <!-- <THEME src="theme/common.xml"/> -->
         <!-- <UPDATEINFO realTimeType="all" /> -->
         <ORIENTATION type="defaultPortrait" />
